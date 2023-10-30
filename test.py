@@ -1,10 +1,9 @@
+import pathlib
 import time
+from argparse import ArgumentParser
 
 import faiss
-import pathlib
-import torch
 from PIL import Image
-from argparse import ArgumentParser
 
 from src.dataloader import get_transformation
 from src.feature_extraction import RGBHistogram, LBP
@@ -30,7 +29,6 @@ def get_image_list(image_root):
 def main():
     parser = ArgumentParser()
     parser.add_argument("--feature_extractor", required=True, type=str, default='VGG16')
-    parser.add_argument("--device", required=False, type=str, default='cuda:0')
     parser.add_argument("--top_k", required=False, type=int, default=11)
     parser.add_argument("--test_image_path", required=False, type=str,
                         default='./dataset/paris/paris_triomphe_001112.jpg')
@@ -39,12 +37,11 @@ def main():
     start = time.time()
 
     args = parser.parse_args()
-    device = torch.device(args.device)
 
     if (args.feature_extractor == 'RGBHistogram'):
-        extractor = RGBHistogram(device)
+        extractor = RGBHistogram()
     elif (args.feature_extractor == 'LBP'):
-        extractor = LBP(device)
+        extractor = LBP()
     else:
         print("No matching model found")
         return

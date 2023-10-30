@@ -1,5 +1,4 @@
 import time
-
 from argparse import ArgumentParser
 
 from src.compute import compute_mAP

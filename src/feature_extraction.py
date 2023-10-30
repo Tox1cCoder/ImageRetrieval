@@ -4,7 +4,7 @@ from skimage.feature import local_binary_pattern
 
 
 class RGBHistogram():
-    def __init__(self, device):
+    def __init__(self):
         self.shape = 768  # the length of the feature vector
 
     def extract_features(self, image):
@@ -33,7 +33,7 @@ class RGBHistogram():
 
 
 class LBP():
-    def __init__(self, device):
+    def __init__(self):
         self.shape = 26  # the length of the feature vector
 
     def extract_features(self, image):

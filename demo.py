@@ -1,9 +1,8 @@
+import pathlib
 import time
 
 import faiss
-import pathlib
 import streamlit as st
-import torch
 from PIL import Image
 from streamlit_cropper import st_cropper
 
@@ -12,7 +11,6 @@ from src.feature_extraction import RGBHistogram, LBP
 
 st.set_page_config(layout="wide")
 
-device = torch.device('cpu')
 image_root = './dataset/paris'
 feature_root = './dataset/feature'
 
@@ -29,15 +27,14 @@ def get_image_list(image_root):
 
 def retrieve_image(img, feature_extractor):
     if (feature_extractor == 'RGBHistogram'):
-        extractor = RGBHistogram(device)
+        extractor = RGBHistogram()
     elif (feature_extractor == 'LBP'):
-        extractor = LBP(device)
+        extractor = LBP()
 
     transform = get_transformation()
 
     img = img.convert('RGB')
     image_tensor = transform(img)
-    image_tensor = image_tensor.unsqueeze(0).to(device)
     feat = extractor.extract_features(image_tensor)
 
     indexer = faiss.read_index(feature_root + '/' + feature_extractor + '.index.bin')
