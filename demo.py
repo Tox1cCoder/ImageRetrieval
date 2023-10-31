@@ -1,16 +1,18 @@
-import pathlib
 import time
-
+import torch
 import faiss
-import streamlit as st
+import pathlib
 from PIL import Image
+
+import streamlit as st
 from streamlit_cropper import st_cropper
 
+from src.feature_extraction import MyResnet50, LBP, SIFT
 from src.dataloader import get_transformation
-from src.feature_extraction import RGBHistogram, LBP
 
 st.set_page_config(layout="wide")
 
+device = torch.device('cpu')
 image_root = './dataset/paris'
 feature_root = './dataset/feature'
 
@@ -21,13 +23,14 @@ def get_image_list(image_root):
     for image_path in image_root.iterdir():
         if image_path.exists():
             image_list.append(image_path)
-    image_list = sorted(image_list, key=lambda x: x.name)
+    image_list = sorted(image_list, key = lambda x: x.name)
     return image_list
 
-
 def retrieve_image(img, feature_extractor):
-    if (feature_extractor == 'RGBHistogram'):
-        extractor = RGBHistogram()
+    if (feature_extractor == 'Resnet50'):
+        extractor = MyResnet50(device)
+    elif (feature_extractor == 'SIFT'):
+        extractor = SIFT()
     elif (feature_extractor == 'LBP'):
         extractor = LBP()
 
@@ -35,6 +38,7 @@ def retrieve_image(img, feature_extractor):
 
     img = img.convert('RGB')
     image_tensor = transform(img)
+    image_tensor = image_tensor.unsqueeze(0).to(device)
     feat = extractor.extract_features(image_tensor)
 
     indexer = faiss.read_index(feature_root + '/' + feature_extractor + '.index.bin')
@@ -43,29 +47,26 @@ def retrieve_image(img, feature_extractor):
 
     return indices[0]
 
-
 def main():
     st.title('CONTENT-BASED IMAGE RETRIEVAL')
-
+    
     col1, col2 = st.columns(2)
 
     with col1:
         st.header('QUERY')
 
         st.subheader('Choose feature extractor')
-        option = st.selectbox('.', ('RGBHistogram', 'LBP'))
+        option = st.selectbox('.', ( 'Resnet50', 'SIFT','LBP'))
 
         st.subheader('Upload image')
         img_file = st.file_uploader(label='.', type=['png', 'jpg'])
 
         if img_file:
             img = Image.open(img_file)
-            # Get a cropped image from the frontend
             cropped_img = st_cropper(img, realtime_update=True, box_color='#FF0004')
-
-            # Manipulate cropped image at will
+            
             st.write("Preview")
-            _ = cropped_img.thumbnail((150, 150))
+            _ = cropped_img.thumbnail((150,150))
             st.image(cropped_img)
 
     with col2:
@@ -84,29 +85,28 @@ def main():
 
             with col3:
                 image = Image.open(image_list[retriev[0]])
-                st.image(image, use_column_width='always')
+                st.image(image, use_column_width = 'always')
 
             with col4:
                 image = Image.open(image_list[retriev[1]])
-                st.image(image, use_column_width='always')
+                st.image(image, use_column_width = 'always')
 
             col5, col6, col7 = st.columns(3)
 
             with col5:
                 for u in range(2, 11, 3):
                     image = Image.open(image_list[retriev[u]])
-                    st.image(image, use_column_width='always')
+                    st.image(image, use_column_width = 'always')
 
             with col6:
                 for u in range(3, 11, 3):
                     image = Image.open(image_list[retriev[u]])
-                    st.image(image, use_column_width='always')
+                    st.image(image, use_column_width = 'always')
 
             with col7:
                 for u in range(4, 11, 3):
                     image = Image.open(image_list[retriev[u]])
-                    st.image(image, use_column_width='always')
-
+                    st.image(image, use_column_width = 'always')
 
 if __name__ == '__main__':
     main()

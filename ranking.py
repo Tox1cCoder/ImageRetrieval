@@ -3,12 +3,13 @@ import pathlib
 import time
 from argparse import ArgumentParser
 
-import faiss
 import torch
 from PIL import Image
+import numpy as np
+from sklearn.cluster import KMeans
 
 from src.dataloader import get_transformation
-from src.feature_extraction import RGBHistogram, LBP
+from src.feature_extraction import MyResnet50, LBP, SIFT
 
 ACCEPTED_IMAGE_EXTS = ['.jpg', '.png']
 
@@ -30,6 +31,7 @@ def get_image_list(image_root):
 def main():
     parser = ArgumentParser()
     parser.add_argument("--feature_extractor", required=True, type=str, default='Resnet50')
+    parser.add_argument("--device", required=False, type=str, default='cuda:0')
     parser.add_argument("--top_k", required=False, type=int, default=11)
     parser.add_argument("--crop", required=False, type=bool, default=False)
 
@@ -37,11 +39,14 @@ def main():
     start = time.time()
 
     args = parser.parse_args()
+    device = torch.device(args.device)
 
-    if (args.feature_extractor == 'RGBHistogram'):
-        extractor = RGBHistogram()
-    elif (args.feature_extractor == 'LBP'):
+    if args.feature_extractor == 'Resnet50':
+        extractor = MyResnet50(device)
+    elif args.feature_extractor == 'LBP':
         extractor = LBP()
+    elif args.feature_extractor == 'SIFT':
+        extractor = SIFT()
     else:
         print("No matching model found")
         return
@@ -50,7 +55,7 @@ def main():
     transform = get_transformation()
 
     for path_file in os.listdir(query_root):
-        if (path_file[-9:-4] == 'query'):
+        if path_file[-9:-4] == 'query':
             rank_list = []
 
             with open(query_root + '/' + path_file, "r") as file:
@@ -61,7 +66,7 @@ def main():
             pil_image = pil_image.convert('RGB')
 
             path_crop = 'original'
-            if (args.crop):
+            if args.crop:
                 pil_image = pil_image.crop((float(left), float(top), float(right), float(bottom)))
                 path_crop = 'crop'
 
@@ -69,15 +74,20 @@ def main():
             image_tensor = image_tensor.unsqueeze(0).to(device)
             feat = extractor.extract_features(image_tensor)
 
-            indexer = faiss.read_index(feature_root + '/' + args.feature_extractor + '.index.bin')
+            n_clusters = 256
+            kmeans = KMeans(n_clusters=n_clusters, random_state=0).fit(feat)
 
-            _, indices = indexer.search(feat, k=args.top_k)
+            cluster_assignment = kmeans.predict(feat)
+            cluster_indices = np.where(kmeans.labels_ == cluster_assignment)[0]
+            distances = np.linalg.norm(feat[cluster_indices] - feat, axis=1)
+            sorted_indices = np.argsort(distances)
+            top_k_indices = cluster_indices[sorted_indices[:args.top_k]]
 
-            for index in indices[0]:
+            for index in top_k_indices:
                 rank_list.append(str(img_list[index]))
 
-            with open(evaluate_root + '/' + path_crop + '/' + args.feature_extractor + '/' + path_file[:-10] + '.txt',
-                      "w") as file:
+            with open(
+                evaluate_root + '/' + path_crop + '/' + args.feature_extractor + '/' + path_file[:-10] + '.txt', "w") as file:
                 file.write("\n".join(rank_list))
 
     end = time.time()

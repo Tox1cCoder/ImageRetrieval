@@ -1,8 +1,8 @@
+from PIL import Image
 import pathlib
 
-from PIL import Image
-from torch.utils.data import Dataset
 from torchvision import transforms
+from torch.utils.data import Dataset
 
 ACCEPTED_IMAGE_EXTS = ['.jpg', '.png']
 
