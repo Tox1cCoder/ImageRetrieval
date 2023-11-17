@@ -64,10 +64,7 @@ def main():
         if img_file:
             img = Image.open(img_file)
             cropped_img = st_cropper(img, realtime_update=True, box_color='#FF0004')
-            
-            st.write("Preview")
-            _ = cropped_img.thumbnail((150,150))
-            st.image(cropped_img)
+
 
     with col2:
         st.header('RESULT')
