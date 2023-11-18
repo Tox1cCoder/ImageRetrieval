@@ -4,13 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9a258ecf-fc4a-4567-9edf-d6d107389834" name="Changes" comment="Added SIFT Extractor">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="9a258ecf-fc4a-4567-9edf-d6d107389834" name="Changes" comment="Fixed SIFT shape">
+      <change afterPath="$PROJECT_DIR$/ranking_kmeans.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ranking.py" beforeDir="false" afterPath="$PROJECT_DIR$/ranking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/feature_extraction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/feature_extraction.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ranking.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ranking_bk.py" beforeDir="false" afterPath="$PROJECT_DIR$/ranking_faiss.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,7 +63,15 @@
       <option name="project" value="LOCAL" />
       <updated>1698767352771</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Fixed SIFT shape">
+      <option name="closed" value="true" />
+      <created>1700238903346</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1700238903346</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -73,6 +79,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Added SIFT Extractor" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added SIFT Extractor" />
+    <MESSAGE value="Fixed SIFT shape" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed SIFT shape" />
   </component>
 </project>
