@@ -9,7 +9,7 @@ This project tackles Content-based Image Retrieval using the Faiss algorithm by 
   - **Input**: Image database, query image
   - **Output**: Ranked list of images similar to the query, with the most similar on top
 
-Utilizing the [faiss](https://github.com/facebookresearch/faiss.git) library by Facebook, ResNet50 network weights are sourced from the pre-trained model in [torchvision.models](https://pytorch.org/vision/stable/models.html).
+Utilizing the [FAISS](https://github.com/facebookresearch/faiss.git) library by Facebook, ResNet50 network weights are sourced from the pre-trained model in [torchvision.models](https://pytorch.org/vision/stable/models.html).
 
 ## Prepare the environment
 
